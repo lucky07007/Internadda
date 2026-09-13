@@ -1,0 +1,1 @@
+export default function sitemap(){const base="https://upforge.in";const paths=["/","/learn","/notes","/quizzes","/videos","/technical-interview","/pricing","/resources","/blog","/for-companies"];return paths.map(p=>({url:base+p,changeFrequency:"weekly",priority:p==="/"?1:.7}))}

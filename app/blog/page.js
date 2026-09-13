@@ -1,0 +1,3 @@
+import Link from "next/link";
+import { blogs } from "../../data/content";
+export default function Blog(){return <div className="page"><div className="container"><div className="page-head"><div className="eyebrow">Career blog</div><h1>Practical internship and interview advice.</h1><p className="lead">Short guides built around real student preparation problems.</p></div><div className="grid grid2">{blogs.map(b=><Link href={`/blog/${b.slug}`} className="card" key={b.slug}><span className="tag">{b.cat}</span><h3>{b.title}</h3><p>{b.body[0]}</p><span className="kicker">Read article →</span></Link>)}</div></div></div>}

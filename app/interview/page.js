@@ -1,0 +1,2 @@
+import TechnicalInterviewClient from "../../components/TechnicalInterviewClient";
+export default function Interview(){return <div className="page"><div className="container"><div className="page-head"><div className="eyebrow">UpForge AI interview lab</div><h1>Practice until your thinking is easier to explain.</h1><p className="lead">Start with two free technical rounds. Each round is interactive: the AI asks a question, listens to your answer and follows up based on what you said.</p></div><TechnicalInterviewClient/></div></div>}

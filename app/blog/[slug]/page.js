@@ -1,0 +1,3 @@
+import { blogs } from "../../../data/content";
+export function generateStaticParams(){return blogs.map(x=>({slug:x.slug}))}
+export default async function BlogPost({params}){const {slug}=await params;const b=blogs.find(x=>x.slug===slug);if(!b)return <div className="page"><div className="container"><h1>Article not found</h1></div></div>;return <article className="page"><div className="container" style={{maxWidth:820}}><span className="tag">{b.cat}</span><h1>{b.title}</h1>{b.body.map((p,i)=><p className="lead" key={i}>{p}</p>)}<div className="notice" style={{marginTop:24}}>Practice what you learned: open the <a href="/technical-interview"><b>AI interview practice</b></a> or the <a href="/quizzes"><b>quizzes</b></a>.</div></div></article>}

@@ -1,0 +1,4 @@
+import { lessons } from "../../../data/content";
+import LessonClient from "../../../components/LessonClient";
+export function generateStaticParams(){return lessons.map(x=>({id:x.id}))}
+export default async function Lesson({params}){const {id}=await params;const lesson=lessons.find(x=>x.id===id);if(!lesson)return <div className="page"><div className="container"><h1>Lesson not found</h1></div></div>;return <div className="page"><div className="container"><div className="page-head"><span className="tag">{lesson.tag} · {lesson.mins} min</span><h1>{lesson.title}</h1></div><div className="split"><article className="card"><h2>Notes</h2>{lesson.body.map((p,i)=><p key={i} className="lead">{p}</p>)}<div className="notice"><b>Practice:</b> {lesson.practice}</div></article><LessonClient lesson={lesson}/></div></div></div>}

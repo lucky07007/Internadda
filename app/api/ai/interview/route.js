@@ -1,0 +1,11 @@
+import {requireFirebaseUser} from "../../../../lib/serverAuth";import {groqChat,extractJson} from "../../../../lib/ai";import {getUserDocument,setUserFields,integerField,stringField} from "../../../../lib/firestoreRest";
+export const runtime="edge";
+function normalizeMessages(messages){return Array.isArray(messages)?messages.slice(-14).map(m=>({role:m.role==="assistant"?"assistant":"user",content:String(m.content||"").slice(0,2200)})):[]}
+export async function POST(req){try{const {user,token}=await requireFirebaseUser(req);const body=await req.json();const mode=body.mode||"technical";const role=String(body.role||"Full Stack Developer");const messages=normalizeMessages(body.messages);if(!messages.length)return Response.json({error:"Start with an answer or ask for the first question."},{status:400});
+ const usage=await getUserDocument(token,"aiUsage",user.localId);const used=integerField(usage,"technicalRoundsUsed",0);const subscription=stringField(usage,"subscription","free");const roundId=String(body.roundId||"");const isNewRound=Boolean(body.startRound);
+ if(mode==="technical"&&isNewRound&&subscription!=="active"&&used>=2)return Response.json({error:"Your 2 free AI technical rounds are used. Activate the ₹49 UpForge Personal plan to continue."},{status:402});
+ if(mode==="technical"&&isNewRound&&subscription!=="active"){await setUserFields(token,"aiUsage",user.localId,{technicalRoundsUsed:used+1});}
+ const system=`You are UpForge's realistic technical interview coach. Target role: ${role}. Run a focused technical round for an internship/junior candidate. Ask one question at a time. Mix fundamentals, project reasoning, debugging, trade-offs and role-specific questions. Do not give the answer before the student attempts it. Use previous answers to choose the next difficulty. Keep questions under 70 words. This is practice, not a hiring decision. When the candidate asks for feedback, give concise evidence-based feedback.`;
+ const raw=await groqChat([{role:"system",content:system},...messages],{max_tokens:320,temperature:.35});
+ return Response.json({text:raw,roundId:roundId||crypto.randomUUID()});
+ }catch(e){const status=e.message?.includes("2 free")?402:502;return Response.json({error:e.message||"AI interview unavailable"},{status})}}
